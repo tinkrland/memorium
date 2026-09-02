@@ -1,37 +1,36 @@
 # memorium
 
-a persona-based memory system. one you, many perspectives — each with its own memory, permissions, relevance, and behavior. sandboxed by default, sharing configurable.
+memorium tackles the widespread industry effort of maintaining agentic memory persistence by making retrieval prioritization and implementation more human-like through weighted, nested, associative, and prioritized knowledge structures governed by absolute accuracy, perspective-based relevance, and sandboxed boundaries.
 
-memorium is not "a persona joining a meeting." it is switching perspective POV — like switching accounts on a shared laptop, but instead of different people, it's different perspectives of you (student you, founder you, employee you, hobbyist you). rapid POV switching is the goal.
+or simply put, we basically think that stuffing an ai with endless piles of raw text doesn't help it learn, because true intelligence comes from properly interpreting, digesting, and **building dense associative connections** the way human brains do. as a believer in *intertwingularity*, applying that interconnected structure to computing is what lets agents truly understand what matters, what connects, and what to keep private, rather than just regurgitating data from a messy bucket.
 
-## the core insight: two axes of memory
+## the idea behind silicoplasticity
+we started with the well known concept in the realm of cognitive science and computational neurology that is neuroplasticity. while human neuroplasticity refers to the brain's physical ability to reorganize itself by forming new neural connections based on experience, memorium aims to do that digitally for ai agents.
 
-**weight** = how core a memory is to the persona's identity (0-1). "i am a developer" is weight 0.9 and never decays. "the meeting is at 3pm" is weight 0.1 and evaporates.
+instead of a static filing cabinet where data just sits untouched, it lets an agent's memory dynamically adapt—strengthening core identity roots, letting temporary tasks fade through decay, and weaving dense associative webs between ideas. it’s essentially giving an ai the computational equivalent of a living, shifting cognitive network.
 
-**hierarchy** = how much a memory drives behavior right now (0-1). "the exam is tomorrow" is low weight but hierarchy 0.9. identity-weighted, behavior-hierarchical, associative — this is memorium.
+the goal behind memorium is the concept we refer to as silicoplasticity since it captures the entire thesis in a single word—taking the biological adaptability of neuroplasticity and mapping it directly onto silicon-based agentic memory. we aim to completely bypass the dry engineering jargon and hit right at the core of what memorium is keen on doing: giving ai the ability to dynamically rewire, strengthen, and adapt its memory pathways over time instead of just reading from a static bucket.
 
-## the seven pillars
+## what's the goal 
+the goal is a shift in ai from static retrieval (like standard vector databases or weights locked after training) to biologically-inspired continuous learning graphs. Instead of treating memory as a fixed file, these systems mimic synaptic neuroplasticity—where memory nodes dynamically create new edges, strengthen weights through usage, and prune dormant pathways in real time while also managing the data science challenge of avoiding representation collapse—where everything eventually drifts into one giant, useless mush, with a homeostatic mechanism to push back.
 
-knowledge · weightage · nesting · associativity · priority · contextual relevance wrt perspective · accuracy — defined in [research/agenda/pillars.md](./research/agenda/pillars.md), with a formal research agenda per pillar in [research/agenda/readme.md](./research/agenda/readme.md).
+## pillars
+as defined thoroughly in the [agenda](/research/agenda/pillars.md) and informal [research overview](/research/agenda/readme.md), there are seven pillars of memorium, which include:
+- knowledge
+- weightage
+- nesting
+- associativity
+- prioritization
+- contextual relevance (in accordange with perspective view)
+- accuracy 
 
-## the graph IS the interface
+## interface design
+> add this section later and refer to /research/ux.md
+> 
+.... we don't believe the graph should be decoration on top of the data layer, but rather the visualization is what actually the project runs on.
 
-the d3 force-directed knowledge graph is the primary UI, not a dashboard add-on. node radius = identity weight, glow/pulse = hierarchy decay, typed edges render as solid/dashed/dotted strokes, and filtering happens inside the graph. the spatial-cognitive visual architecture is scoped in [research/ux.md](./research/ux.md).
+## inspired by
+we're already building other projects in this realm. our existing project *substrate* will be getting a rehaul to adapt to memorium architecture aka making it our pilot program. substrate originally belongs to our other related existing conceptualization/cognition related project ecosystem of *analogize*
 
-## repository map
-
-| path | what |
-| --- | --- |
-| [memorium.md](./memorium.md) | full design doc — weighted, hierarchical, associative persona memory |
-| [research/](./research) | research scoping: tag-wrangling datasets, weighting mechanics, seven-pillar agenda, visual UX |
-| [pilot/](./pilot) | memorium deployed outside prixie — non-binary perspectives ("both are right"), ted nelson's intertwingularity |
-| [src/](./src) | standalone, stack-agnostic, GUI-first memory system source |
-| [yaps/](./yaps) / [yap/](./yap) | docs: problem, features, concept sketch, roadmap, technobabble |
-| [applications/prixie](./applications/prixie) | prixie — the first application built on memorium (meeting proxy agent) |
-
-## applications
-
-memorium is an engine. applications consume it:
-
-- **[prixie](./applications/prixie)** — a personal meeting proxy agent. she joins meetings on your behalf, listens for what you asked her to find, and comes back with exactly what you needed. prixie uses memorium to know which perspective of you is attending.
-- **[pilot](./pilot)** — memorium as its own application: an externalized spatial mind-space (see [pilot/readme.md](./pilot/readme.md)).
+<ins>participation for</ins>: aws trainium frontier competition (devpost) and graph hacks w falkordb (wemakedevs) <br>
+<ins>intended participation</ins>: zerve.ai fellowship
