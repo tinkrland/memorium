@@ -1,0 +1,26 @@
+# dependencies
+node_modules/
+deno.lock
+
+# env
+.env
+.env.local
+.env.*.local
+
+# build
+dist/
+build/
+.vite/
+
+# editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# os
+.DS_Store
+Thumbs.db
+
+# misc
+*.log

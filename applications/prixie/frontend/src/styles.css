@@ -1,0 +1,115 @@
+@import "tailwindcss" source(none);
+@source "../src";
+
+@theme {
+  --color-canvas: #e4bdb5;
+  --color-ink: #1c0808;
+  --color-ribbon: #8c1414;
+  --color-leaf: #2d5a27;
+  --color-border: #8c1414;
+  --color-accent: #8c1414;
+
+  --color-background: #e4bdb5;
+  --color-foreground: #1c0808;
+  --color-primary: #8c1414;
+  --color-primary-foreground: #f8ebe8;
+  --color-secondary: #d4a8a0;
+  --color-secondary-foreground: #1c0808;
+  --color-muted: #c8978f;
+  --color-muted-foreground: #6c2828;
+  --color-card: #dab0a8;
+  --color-card-foreground: #1c0808;
+  --color-input: #8c1414;
+  --color-ring: #8c1414;
+
+  --font-sans: "jetbrains mono", ui-monospace, monospace;
+  --font-mono: "jetbrains mono", ui-monospace, monospace;
+  --font-display: "barlow condensed", ui-sans-serif, sans-serif;
+
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+}
+
+:root {
+  --canvas: #e4bdb5;
+  --ink: #1c0808;
+  --ribbon: #8c1414;
+  --leaf: #2d5a27;
+  --border: #8c1414;
+  --accent: #8c1414;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    background-color: var(--canvas);
+    color: var(--ink);
+    font-family: var(--font-mono);
+    margin: 0;
+    min-width: 320px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  ::selection {
+    background: var(--ribbon);
+    color: #f8ebe8;
+  }
+
+  /* ruled border inputs and zero radius document styling */
+  input, select, textarea {
+    font-family: inherit;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
+
+  *:hover {
+    scrollbar-color: var(--ribbon) transparent;
+  }
+}
+
+/* Custom status badge colors */
+.badge-scheduled {
+  background-color: rgba(28, 8, 8, 0.08);
+  color: var(--ink);
+  border-color: rgba(28, 8, 8, 0.3);
+}
+
+.badge-joining {
+  background-color: rgba(180, 83, 9, 0.12);
+  color: #92400e;
+  border-color: rgba(180, 83, 9, 0.4);
+}
+
+.badge-in_meeting {
+  background-color: rgba(29, 78, 216, 0.12);
+  color: #1e40af;
+  border-color: rgba(29, 78, 216, 0.4);
+}
+
+.badge-completed {
+  background-color: rgba(45, 90, 39, 0.15);
+  color: var(--leaf);
+  border-color: var(--leaf);
+}
+
+.badge-failed {
+  background-color: rgba(140, 20, 20, 0.15);
+  color: var(--ribbon);
+  border-color: var(--ribbon);
+}
