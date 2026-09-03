@@ -49,6 +49,8 @@ export async function createMeeting(input: CreateMeetingInput): Promise<Meeting>
         attendance_method: input.attendance_method || "none",
         attendance_form_url: input.attendance_form_url || null,
         zoom_user_email: input.zoom_user_email || null,
+        voice_override: (input as any).voice_override || null,
+        localization: (input as any).localization || null,
         status: "scheduled",
         prixie_attended: false,
         attendance_messages_sent: false,

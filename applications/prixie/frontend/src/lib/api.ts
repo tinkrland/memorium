@@ -42,6 +42,8 @@ export async function createMeeting(config: DeployConfig): Promise<Meeting> {
       attendance_form_url: config.attendance_form_url,
       instruction: config.instruction,
       profile_id: config.profile_id,
+      voice_override: config.voice_override,
+      localization: config.localization,
       breakout_room_mode: config.breakout_mode,
       breakout_room_id: config.breakout_room_id,
     }),

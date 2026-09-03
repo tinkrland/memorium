@@ -38,6 +38,8 @@ meetingsRouter.post("/", async (c) => {
       attendance_method: body.attendance_method || "none",
       attendance_form_url: body.attendance_form_url,
       zoom_user_email: body.zoom_user_email,
+      voice_override: body.voice_override,
+      localization: body.localization,
     });
 
     return c.json(

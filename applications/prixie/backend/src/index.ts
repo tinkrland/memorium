@@ -17,6 +17,7 @@ import forumLinksRouter from "./routes/forum_links.ts";
 import voiceAgentRouter from "./routes/voice_agent.ts";
 import memoriumRouter from "./routes/memorium.ts";
 import memoriumTagsRouter from "./routes/memorium_tags.ts";
+import voicePresetsRouter from "./routes/voice_presets.ts";
 
 import recallRealtimeWebhook from "./routes/webhooks/recall_realtime.ts";
 import recallStatusWebhook from "./routes/webhooks/recall_status.ts";
@@ -42,7 +43,7 @@ app.get("/", (c) => {
       "/api/meetings", "/api/capture", "/api/transcripts", "/api/deploy",
       "/api/profiles", "/api/stats", "/api/browserbase", "/api/luma",
       "/api/calendly", "/api/hinglish", "/api/inbox", "/api/live-links",
-      "/api/forum", "/api/voice", "/api/memorium",
+      "/api/forum", "/api/voice", "/api/memorium", "/api/voice-presets",
     ],
   });
 });
@@ -64,6 +65,7 @@ app.route("/api/forum", forumLinksRouter);
 app.route("/api/voice", voiceAgentRouter);
 app.route("/api/memorium", memoriumRouter);
 app.route("/api/memorium", memoriumTagsRouter);
+app.route("/api/voice-presets", voicePresetsRouter);
 
 // webhooks
 app.route("/webhooks/recall/realtime", recallRealtimeWebhook);

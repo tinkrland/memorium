@@ -8,21 +8,22 @@ const supabase = createClient(
 
 const app = new Hono();
 
-// list profiles
+// list voice presets
 app.get("/", async (c) => {
   const { data, error } = await supabase
-    .from("profiles")
+    .from("voice_presets")
     .select("*")
-    .order("created_at", { ascending: true });
+    .order("is_builtin", { ascending: false })
+    .order("name", { ascending: true });
   if (error) return c.json({ error: error.message }, 500);
   return c.json(data || []);
 });
 
-// get single profile
+// get single preset
 app.get("/:id", async (c) => {
   const id = c.req.param("id");
   const { data, error } = await supabase
-    .from("profiles")
+    .from("voice_presets")
     .select("*")
     .eq("id", id)
     .single();
@@ -30,25 +31,14 @@ app.get("/:id", async (c) => {
   return c.json(data);
 });
 
-// create profile
+// create custom preset (user-created)
 app.post("/", async (c) => {
   const body = await c.req.json();
   const { data, error } = await supabase
-    .from("profiles")
+    .from("voice_presets")
     .insert({
       name: body.name,
-      display_name: body.display_name || body.name,
-      email: body.email,
-      context: body.context,
-      shared_memory: body.shared_memory ?? true,
-      is_default: false,
-      // voice config
-      voice_id: body.voice_id,
-      tone: body.tone || "neutral",
-      initiative_level: body.initiative_level || "passive",
-      question_style: body.question_style || "direct",
-      language_preference: body.language_preference || "en",
-      // fist — rhythmic signature
+      description: body.description,
       fist_score: body.fist_score ?? 0.7,
       fist_timing_variation: body.fist_timing_variation ?? 0.35,
       fist_rhythm_stability: body.fist_rhythm_stability ?? 0.72,
@@ -60,6 +50,8 @@ app.post("/", async (c) => {
       seriousness: body.seriousness ?? 0.7,
       professionalism: body.professionalism ?? 0.5,
       vocabulary: body.vocabulary ?? 0.5,
+      tone: body.tone || "neutral",
+      is_builtin: false,
     })
     .select()
     .single();
@@ -67,12 +59,21 @@ app.post("/", async (c) => {
   return c.json(data);
 });
 
-// update profile
+// update custom preset (only if not builtin)
 app.patch("/:id", async (c) => {
   const id = c.req.param("id");
   const body = await c.req.json();
+
+  // check if builtin
+  const { data: existing } = await supabase
+    .from("voice_presets")
+    .select("is_builtin")
+    .eq("id", id)
+    .single();
+  if (existing?.is_builtin) return c.json({ error: "cannot modify builtin preset" }, 403);
+
   const { data, error } = await supabase
-    .from("profiles")
+    .from("voice_presets")
     .update(body)
     .eq("id", id)
     .select()
@@ -81,11 +82,19 @@ app.patch("/:id", async (c) => {
   return c.json(data);
 });
 
-// delete profile
+// delete custom preset (only if not builtin)
 app.delete("/:id", async (c) => {
   const id = c.req.param("id");
+
+  const { data: existing } = await supabase
+    .from("voice_presets")
+    .select("is_builtin")
+    .eq("id", id)
+    .single();
+  if (existing?.is_builtin) return c.json({ error: "cannot delete builtin preset" }, 403);
+
   const { error } = await supabase
-    .from("profiles")
+    .from("voice_presets")
     .delete()
     .eq("id", id);
   if (error) return c.json({ error: error.message }, 500);

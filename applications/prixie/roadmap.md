@@ -455,3 +455,336 @@ test result: screen share + filler + cursor activity = prixie stays quiet. corre
 - vapi: full conversational voice agent
 - mem0: persistent memory layer (wrapped by memorium)
 
+
+---
+
+## phase 6: social calling + phone (future)
+
+prixie joins calls that aren't meetings. social platform calls, audio spaces, and regular phone calls. the meeting proxy concept extended to everywhere people actually talk.
+
+### instagram calls
+
+instagram doesn't have a public API for joining calls. the approach:
+
+1. prixie opens instagram in a browserbase session (or the instagram desktop app via browser automation)
+2. navigates to the DM thread where the call is happening
+3. clicks "join call" (browser automation handles the UI)
+4. captures tab audio via media capture API
+5. streams audio to assembly.ai for transcription
+6. same keyword detection + capture pipeline runs on top
+7. when the call ends, returns transcript + captured items
+
+challenges:
+- instagram web doesn't support video calls in all browsers — may need mobile emulation
+- auth: prixie needs to be logged into instagram (session cookies or credentials)
+- instagram may detect and block automated sessions — need human-like behavior patterns
+- no official API means this is fragile and may break on UI changes
+
+alternative: if meta opens a calling API (whatsapp business API already exists for messaging), use that instead. until then, browser automation is the only path.
+
+### twitter / x spaces
+
+twitter spaces are public audio conversations. no join API, but they're browser-accessible.
+
+1. prixie opens the spaces URL in a browserbase session
+2. clicks "join space" (handles any login/auth prompts)
+3. captures audio from the browser tab
+4. streams to assembly.ai for transcription
+5. keyword detection runs on the transcript
+6. captures links shared in the space, speaker names, key quotes
+7. returns transcript + captured items when the space ends
+
+challenges:
+- spaces can run for hours — need to handle long sessions efficiently
+- speaker identification is harder (twitter doesn't expose per-speaker audio streams)
+- some spaces require twitter login to join
+- spaces can be private/limited — prixie can only join public ones
+
+use case: monitoring industry spaces, AMAs, or community discussions for specific information without attending the full session.
+
+### whatsapp calls
+
+whatsapp doesn't have a calling API for joining calls. two approaches:
+
+**approach 1: whatsapp web via browserbase**
+1. prixie opens whatsapp web in a browserbase session
+2. pairs with the user's whatsapp account (QR code, one-time setup)
+3. when a call starts in a DM or group, clicks "join call"
+4. captures audio via media capture API
+5. streams to assembly.ai for transcription
+6. same capture pipeline
+
+challenges:
+- whatsapp web calling support varies by region and browser
+- whatsapp may detect automation
+- one-to-one calls are private — prixie should only join group calls where the user has consent
+
+**approach 2: whatsapp business API (if/when calling is supported)**
+- whatsapp business API currently supports messaging, not calling
+- if meta opens a calling endpoint, prixie would use it directly (like recall.ai for zoom)
+- this is the clean path but doesn't exist yet
+
+note: whatsapp group calls can have up to 32 participants. prixie joining a group call as a silent listener is the same proxy concept as meetings, just on a different platform.
+
+### facetime calls
+
+apple does not provide any API for joining facetime calls. this is the hardest platform.
+
+**approach 1: facetime link (browser)**
+- facetime supports "facetime links" — a URL anyone can open to join from a browser (chrome, edge, etc. on non-apple devices)
+1. prixie opens the facetime link in a browserbase session
+2. handles the "join as guest" flow (enter name, allow camera/mic)
+3. captures audio via media capture API
+4. streams to assembly.ai for transcription
+5. same capture pipeline
+
+challenges:
+- facetime links only work if the host creates one (not all facetime calls have links)
+- guest join from browser is limited — may not get per-speaker audio streams
+- apple may restrict or block non-safari browsers over time
+- this is the most fragile integration
+
+**approach 2: apple device automation (local only)**
+- if prixie runs on a mac, she could use apple automation (appleScript, shortcuts) to join facetime calls directly in the facetime app
+- this gives better audio quality and native integration
+- but: requires a mac running locally (breaks the "your device doesn't need to be on" principle)
+- only viable as a self-hosted option
+
+### regular calls (phone calls)
+
+prixie joins regular phone calls — actual phone numbers, not app-based meetings. this is where call-e.com and livekit come in.
+
+**call-e (call-e.com / github.com/CALLE-AI)**
+
+call-e is an AI phone call agent. it's goal-driven, not scripted — you describe a goal ("confirm tomorrow's appointment") and it handles the full call lifecycle: planning, dialing, live conversation, adapting, and returning structured results.
+
+- call-e is not fully open source (the core service is hosted), but it has open SDKs, MCP integrations, and an open integrations repo (github.com/CALLE-AI/call-e-integrations)
+- SDK available in typescript and python
+- handles: outbound dialing, IVR navigation, voicemail, call screening, hold, transfers, interruptions
+- returns: structured results, transcripts, summaries
+- new users get 20 free calls
+
+prixie integration:
+1. user creates a "phone call" capture request with a phone number + goal
+2. prixie calls call-e via SDK: `client.calls.createAndWait({ task: "Call +15550123456 and confirm tomorrow's 9am appointment." })`
+3. call-e handles the entire call
+4. prixie receives the structured result (transcript, summary, outcome)
+5. captured items are stored in memorium under the active persona
+
+this is the clean path for phone calls. call-e handles the telephony, the conversation, and the adaptation. prixie just sets the goal and processes the result.
+
+**livekit (github.com/livekit/livekit)**
+
+livekit is genuinely open source — a WebRTC-based real-time audio/video platform. self-hostable, no vendor lock-in. it's the infrastructure layer, not an agent layer.
+
+use cases in prixie:
+1. **self-hosted calling**: prixie can join livekit rooms directly via the livekit SDK. no third-party API needed. you host the livekit server, prixie connects as a participant.
+2. **voice agent infrastructure**: livekit's agent framework can be used to build prixie's voice interaction (speaking questions out loud, hearing answers) — this is an alternative to vapi/speechify for phase 5
+3. **custom meeting rooms**: if you want prixie to join calls on your own infrastructure (not zoom, not google meet, just your own WebRTC rooms), livekit is the backend
+4. **call recording + transcription**: livekit can capture per-participant audio streams (like recall.ai but self-hosted), which can be piped to assembly.ai
+
+prixie integration:
+1. prixie detects a livekit room URL (from calendar, link sourcing, or direct input)
+2. prixie joins the livekit room as a participant via livekit SDK (camera off, mic off)
+3. livekit provides per-participant audio tracks
+4. audio is streamed to assembly.ai for transcription
+5. same keyword detection + capture pipeline
+6. when the call ends, transcript + captured items are returned
+
+why both:
+- **call-e** handles outbound phone calls to real phone numbers (the PSTN world). livekit doesn't do this directly — it's WebRTC, not telephony.
+- **livekit** handles real-time audio/video rooms (the WebRTC world). call-e is a hosted agent service, not infrastructure.
+- together: call-e for "prixie calls a phone number" and livekit for "prixie joins a WebRTC room on your own infrastructure"
+
+### platform summary (phase 6)
+
+| platform | method | calls | transcript | capture | status |
+| --- | --- | --- | --- | --- | --- |
+| instagram | browserbase | browser join | yes (assembly.ai) | yes | planned (fragile, no API) |
+| twitter/x spaces | browserbase | browser join | yes (assembly.ai) | yes | planned |
+| whatsapp | browserbase (web) or business API | browser join | yes (assembly.ai) | yes | planned (no calling API yet) |
+| facetime | browserbase (link) or local mac automation | browser join or native | yes (assembly.ai) | yes | planned (most fragile) |
+| phone calls (PSTN) | call-e SDK | outbound dial | yes (call-e) | yes (structured result) | planned |
+| custom WebRTC rooms | livekit SDK | SDK join | yes (assembly.ai or livekit) | yes | planned |
+
+all of these are browserbase-first (or SDK-first for call-e/livekit) since none have official "join as a bot" APIs like recall.ai provides for zoom/meet/teams. the capture pipeline (keyword detection, link grabbing, transcript with diarization) is shared across all platforms — only the join method changes.
+
+---
+
+
+---
+
+## phase 7: proxy voice + behavior configuration (GUI)
+
+when deploying prixie to attend as a proxy, the user should be able to control how the agent sounds and behaves — not just what it captures. this is a GUI-first feature on the deploy form.
+
+### what is a "fist"?
+
+in morse code, a "fist" is the unique cadence, rhythm, and personal accent of an individual operator. even though morse code consists of standardized dots and dashes, no two humans hit the key with the exact same timing. the subtle spacing between letters, the length of dashes, the overall tempo create a rhythmic signature — a vocal fingerprint.
+
+experienced operators can recognize who is transmitting just by the "swing" of their code, before the person signs their name. during WWII, military intelligence used "fist analysis" to track specific enemy operators across radio waves — even if they changed location or call sign, their unique prosody on the key gave them away.
+
+a "good fist" means clean, rhythmic, highly readable cadence. a "bad fist" means sloppy, erratic, difficult to understand.
+
+in the digital age, this concept has evolved into keystroke dynamics — your typing rhythm (how long you hold a key, millisecond pauses between letters) is a biometric signature.
+
+for prixie: fist is the agent's **rhythmic identity**. not just how fast it speaks (cadence) or how melodic (prosody) or what emotional register (tone), but the *timing pattern* that makes it recognizable. if prixie attends three meetings as the same persona, someone should be able to identify "that's the same proxy" by rhythm alone — even without hearing the words.
+
+### the four parameters
+
+| parameter | what it does | type | default |
+| --- | --- | --- | --- |
+| fist | the agent's rhythmic signature — timing variation, pause patterns, rhythm stability. a "good fist" is clean and consistent. a "bad fist" is erratic. | slider (0-1, 0 = erratic/bad fist, 1 = pristine/good fist) + style preset | 0.7 (clean, consistent) |
+| cadence | how fast or slow the agent speaks — the base tempo in words per minute | slider (80-220 wpm) | 140 wpm |
+| prosody | the melodic pattern — flat/monotone vs expressive/varied pitch contour | slider (0-1, 0 = monotone, 1 = highly expressive) | 0.4 |
+| tone | the emotional register — warm, formal, casual, curious, assertive, neutral | select (preset + custom) | neutral |
+
+fist is the meta-parameter. cadence, prosody, and tone are the components it shapes. a high-fist agent has consistent cadence, deliberate prosody, and a recognizable tone pattern. a low-fist agent varies unpredictably — sometimes fast, sometimes slow, sometimes flat, sometimes expressive — with no identifiable signature.
+
+### fist decomposition
+
+fist is not a single number. it's computed from sub-parameters that the GUI can expose for fine control:
+
+| sub-parameter | what it measures | range |
+| --- | --- | --- |
+| timing_variation | how much the inter-word spacing varies (low = metronomic, high = natural human variation) | 0-1 |
+| pause_pattern | the pattern of micro-pauses — between sentences, between ideas, before questions | enum: deliberate, natural, minimal, none |
+| rhythm_stability | how consistent the rhythm is across the entire session (low = drifts over time, high = rock-steady) | 0-1 |
+| startup_pattern | how the agent begins speaking — does it launch right in, or have a characteristic opening pause? | enum: immediate, brief_pause, deliberate_opening |
+| turn_entry_pattern | how the agent enters after someone finishes speaking — immediate, after a beat, with a filler | enum: immediate, beat, filler, deliberate |
+
+the GUI shows a simplified fist slider (0-1) by default. an "advanced" toggle reveals these sub-parameters.
+
+### where this lives in the GUI
+
+the deploy form gets a new section — "06 // proxy voice & behavior" — between the instruction field and the submit button:
+
+```
+┌──────────────────────────────────────────────────────────┐
+│  06 // PROXY VOICE & BEHAVIOR                              │
+│                                                            │
+│  VOICE PROFILE                                             │
+│  ┌────────────────────────────────────────────────────┐  │
+│  │  [persona preset ▼] or [custom]                    │  │
+│  │                                                      │  │
+│  │  fist     ▕██████████████░░░░░░░░░░░░░░░░░▏ 0.72    │  │
+│  │           clean, consistent — identifiable          │  │
+│  │                                                      │  │
+│  │  cadence  ▕████████████░░░░░░░░░░░░░░░░░░▏ 142wpm  │  │
+│  │  prosody  ▕██████░░░░░░░░░░░░░░░░░░░░░░░░▏ 0.30    │  │
+│  │  tone     [warm] [formal] [casual] [curious] ...     │  │
+│  │                                                      │  │
+│  │  [▶] advanced fist controls                          │  │
+│  │  [▶ preview voice]                                   │  │
+│  └────────────────────────────────────────────────────┘  │
+│                                                            │
+│  BEHAVIOR                                                  │
+│  ┌────────────────────────────────────────────────────┐  │
+│  │  initiative: ( ) passive  (•) moderate  ( ) proactive│  │
+│  │  question style: ( ) direct  (•) indirect  ( ) socratic│ │
+│  │  max questions per meeting: [3]                     │  │
+│  │  clarification depth: [2]                            │  │
+│  └────────────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────────────┘
+```
+
+expanded advanced fist controls:
+
+```
+ADVANCED FIST CONTROLS
+┌────────────────────────────────────────────────────┐
+│  timing variation   ▕██████░░░░░░░░░░░░░░░░░▏ 0.35  │
+│  rhythm stability   ▕████████████░░░░░░░░░░▏ 0.72  │
+│  pause pattern      [deliberate ▼]                  │
+│  startup pattern    [brief_pause ▼]                 │
+│  turn entry pattern [beat ▼]                        │
+│                                                      │
+│  fist score (computed): 0.72 — good fist            │
+│  [↻ recalculate from sub-parameters]                │
+└────────────────────────────────────────────────────┘
+```
+
+### voice presets
+
+presets bundle fist + cadence + prosody + tone into named profiles:
+
+| preset | fist | cadence | prosody | tone | use case |
+| --- | --- | --- | --- | --- | --- |
+| default | 0.7 | 140 | 0.4 | neutral | general |
+| warm | 0.65 | 130 | 0.6 | warm | community, social |
+| professional | 0.85 | 150 | 0.2 | formal | client, enterprise |
+| casual | 0.55 | 160 | 0.7 | casual | internal, hackathon |
+| curious | 0.6 | 135 | 0.5 | curious | learning, discovery |
+| assertive | 0.8 | 160 | 0.3 | assertive | negotiation, sales |
+| steady | 0.95 | 145 | 0.15 | neutral | technical, precise |
+| erratic | 0.2 | 155 | 0.8 | casual | deliberately unpredictable |
+
+"steady" has the highest fist score (0.95) — extremely consistent, almost metronomic. useful for technical meetings where the agent should sound precise and unambiguous. "erratic" has the lowest (0.2) — intentionally varied, sounds more human but less identifiable.
+
+### preview
+
+the "preview voice" button generates a short sample clip using the configured TTS provider (speechify/vapi) with the current fist/cadence/prosody/tone settings. the user hears how prixie will sound before deploying.
+
+the preview should include:
+1. a sample question (to hear turn entry pattern + pause pattern)
+2. a short statement (to hear cadence + rhythm stability)
+3. a clarification (to hear prosody variation)
+
+this requires the TTS integration (phase 5) to be at least partially wired. until then, the GUI can store the config and show a placeholder preview.
+
+### per-meeting vs per-persona
+
+voice config can be set at two levels:
+
+1. **per-persona** (default): saved to persona_config. every meeting this persona attends uses these settings unless overridden.
+2. **per-meeting override**: the deploy form can override the persona's voice config for a specific meeting. useful for edge cases (your work persona attending a casual team social).
+
+the deploy form shows the persona's saved config as defaults, with sliders pre-set. the user can adjust per-meeting without changing the persona's defaults.
+
+### database schema (new columns on profiles)
+
+```sql
+-- proxy voice configuration
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS fist_score FLOAT DEFAULT 0.7
+  CHECK (fist_score >= 0 AND fist_score <= 1);
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS fist_timing_variation FLOAT DEFAULT 0.35
+  CHECK (fist_timing_variation >= 0 AND fist_timing_variation <= 1);
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS fist_rhythm_stability FLOAT DEFAULT 0.72
+  CHECK (fist_rhythm_stability >= 0 AND fist_rhythm_stability <= 1);
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS fist_pause_pattern TEXT DEFAULT 'deliberate'
+  CHECK (fist_pause_pattern IN ('deliberate', 'natural', 'minimal', 'none'));
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS fist_startup_pattern TEXT DEFAULT 'brief_pause'
+  CHECK (fist_startup_pattern IN ('immediate', 'brief_pause', 'deliberate_opening'));
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS fist_turn_entry_pattern TEXT DEFAULT 'beat'
+  CHECK (fist_turn_entry_pattern IN ('immediate', 'beat', 'filler', 'deliberate'));
+
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS cadence_wpm INTEGER DEFAULT 140
+  CHECK (cadence_wpm >= 80 AND cadence_wpm <= 220);
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS prosody FLOAT DEFAULT 0.4
+  CHECK (prosody >= 0 AND prosody <= 1);
+-- tone already exists from memorium_schema.sql
+
+-- per-meeting voice overrides (stored on meetings table)
+ALTER TABLE public.meetings ADD COLUMN IF NOT EXISTS voice_override JSONB;
+-- voice_override format: {"fist_score": 0.8, "cadence_wpm": 150, "prosody": 0.3, "tone": "formal", ...}
+```
+
+### implementation status
+
+- backend: real — deno + hono + supabase. profiles route does CRUD. memorium_schema.sql already adds tone, initiative_level, question_style, voice_id, language_preference columns.
+- voice agent service: built (end-of-turn detection, interruption handling, clarification fork) but does NOT use fist/cadence/prosody/tone.
+- TTS integration: NOT wired (speechify/vapi mentioned, no implementation).
+- GUI voice controls: NOT built (deploy form has no voice section).
+- frontend: NOT wired to real backend (uses mock data in localStorage).
+
+what's feasible now:
+- add fist/cadence/prosody columns to profiles schema (trivial SQL — see above)
+- add the GUI section to the deploy form (react, can build now with mock preview)
+- store config in the meeting record as voice_override JSONB
+- wire profiles API to include voice config in CRUD
+
+what's not feasible yet:
+- actual TTS rendering with fist parameters (needs speechify/vapi integration + custom timing control)
+- voice preview (needs TTS)
+- the agent actually sounding different in a meeting (needs the full phase 5 voice pipeline)
+- fist-based identification across meetings (needs multiple TTS sessions + comparison)
