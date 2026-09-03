@@ -56,12 +56,12 @@ memorium's data model goes well beyond "embeddings in a vector store." here's wh
 
 ## how to use this
 
-1. read `../yaps/readme.md` for the concept overview
-2. read `../yaps/about.md` for what memorium is (including the 26 design principles)
-3. read `../yaps/problem.md` for why it exists
-4. read `../yaps/concept-sketch.md` for the core ideas sketched out
-5. read `../yaps/technobabble/archtecture.md` for the architecture with mermaid diagrams
-6. read `../yaps/technobabble/underthehood.md` for the internals
+1. read `../concept/readme.md` for the concept overview
+2. read `../concept/about.md` for what memorium is (including the 26 design principles)
+3. read `../concept/problem.md` for why it exists
+4. read `../concept/concept-sketch.md` for the core ideas sketched out
+5. read `../concept/technobabble/archtecture.md` for the architecture with mermaid diagrams
+6. read `../concept/technobabble/underthehood.md` for the internals
 7. pick your stack, implement the data model, wire the retrieval pipeline, build the GUI
 
-memorium is not a library you install. it is a system you build from a spec. the spec lives in `yaps/`.
+memorium is not a library you install. it is a system you build from a spec. the spec lives in `concept/`.
