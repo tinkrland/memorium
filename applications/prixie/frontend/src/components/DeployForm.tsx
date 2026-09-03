@@ -124,6 +124,7 @@ export function DeployForm() {
   const [audience, setAudience] = useState<AudienceScope>('local');
   const [timezoneAwareness, setTimezoneAwareness] = useState(true);
   const [translitLangs, setTranslitLangs] = useState<{ language: string; priority: number; usage: number }[]>([]);
+  const [keepTechnicalEnglish, setKeepTechnicalEnglish] = useState(false);
 
   // behavior
   const [initiative, setInitiative] = useState<'passive' | 'moderate' | 'proactive'>('moderate');
@@ -187,6 +188,7 @@ export function DeployForm() {
       audience,
       timezone_awareness: timezoneAwareness,
       transliteration: translitLangs,
+      keep_technical_english: keepTechnicalEnglish,
     };
   };
 
@@ -781,13 +783,13 @@ export function DeployForm() {
             <div className="border border-primary/20 p-3 bg-background">
               <label className={labelClass}>transliteration — language mix</label>
               <p className="text-[10px] text-muted-foreground mt-1 mb-2">
-                select languages, then order them by priority (who wins conflicts) and slide how much each carries. hindi + english = hinglish.
+                curated list of the world's most spoken languages that need transliteration (assemblyai-supported). select, then order by priority (who wins conflicts) and slide how much each carries — hinglish is just one example of the mix.
               </p>
               <select onChange={e => { addTranslitLang(e.target.value); e.target.value = ''; }}
                 className="w-full border border-primary bg-background p-2 text-sm text-foreground mb-2"
                 defaultValue="">
                 <option value="" disabled>+ add a language</option>
-                {['english', 'hindi', 'spanish', 'french', 'german', 'portuguese', 'mandarin', 'arabic', 'russian', 'japanese', 'korean', 'turkish', 'bengali', 'tamil', 'telugu', 'urdu', 'marathi', 'gujarati', 'punjabi', 'dutch', 'italian', 'hebrew', 'indonesian', 'swahili'].filter(l => !translitLangs.some(t => t.language === l)).map(l => (
+                {['english', 'spanish (eu)', 'spanish (latam)', 'mandarin', 'french (eu)', 'german (germany)', 'russian', 'hindi', 'bengali', 'korean (sk)', 'arabic (khaleeji)', 'arabic (msa)', 'hebrew', 'portuguese', 'urdu', 'indonesian (bahasa)'].filter(l => !translitLangs.some(t => t.language === l)).map(l => (
                   <option key={l} value={l}>{l}</option>
                 ))}
               </select>
@@ -805,6 +807,17 @@ export function DeployForm() {
                   <button type="button" onClick={() => removeTranslitLang(l.language)} className="px-1.5 border border-primary/30 text-xs hover:border-destructive hover:text-destructive">&times;</button>
                 </div>
               ))}
+
+              {/* technical english terms */}
+              <label className="flex items-center justify-between border border-primary/20 px-2 py-1.5 cursor-pointer">
+                <span className="flex flex-col">
+                  <span className="text-sm text-foreground">science/math english words common</span>
+                  <span className="text-[10px] text-muted-foreground">
+                    keeps technical terms (sin, cos, tan, log, matrix, derivative...) in english — the ai won't confuse them for transliterated words.
+                  </span>
+                </span>
+                <input type="checkbox" checked={keepTechnicalEnglish} onChange={e => setKeepTechnicalEnglish(e.target.checked)} className="accent-primary w-4 h-4 ml-3" />
+              </label>
             </div>
           </div>
         )}

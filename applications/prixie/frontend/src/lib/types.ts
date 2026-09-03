@@ -122,6 +122,7 @@ export interface LocalizationConfig {
   audience: AudienceScope;                      // local = shared cultural context, international = explain generically
   timezone_awareness: boolean;                  // respect participants' local time, norms, work hours
   transliteration: TransliterationLanguage[];  // priority-ordered language mix
+  keep_technical_english: boolean;           // science/math terms (sin, cos, tan...) stay english during transliteration
 }
 
 export interface DeployConfig {

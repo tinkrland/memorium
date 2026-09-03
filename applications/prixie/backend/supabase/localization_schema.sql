@@ -2,7 +2,7 @@
 -- one jsonb column on meetings, no join tables — the whole config travels as one object
 --
 -- format: {"unit_system": "metric", "week_start": "monday", "non_work_days": ["sat", "sun"],
---          "audience": "international", "timezone_awareness": true,
+--          "audience": "international", "timezone_awareness": true, "keep_technical_english": true,
 --          "transliteration": [{"language": "hindi", "priority": 1, "usage": 0.5},
 --                              {"language": "english", "priority": 2, "usage": 0.5}]}
 --

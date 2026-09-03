@@ -294,6 +294,7 @@ export interface LocalizationConfig {
   audience: AudienceScope;        // local = shared cultural context, international = generic references
   timezone_awareness: boolean;    // respect participants' local time & norms
   transliteration: TransliterationLanguage[];
+  keep_technical_english: boolean;  // science/math terms (sin, cos, tan...) stay english during transliteration
 }
 
 export interface VoiceConfig {
