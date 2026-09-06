@@ -27,12 +27,12 @@ memorium already has machinery that *partially* guards against exactly what thes
 - `research/ux.md` is about to make design decisions for `/memorium/canvas` — the diagram-as-constraint point ("diagram = constraint of what thought becomes visible") should land *before* that visual grammar is locked in, not after.
 - the substrate pilot (memorium's first live pilot — see [../../pilot/readme.md](../../pilot/readme.md)) already hit this failure mode empirically: canonicalizing a messy corpus into clean domains made the resulting graph *look* more structured than the underlying reality actually is. the notebook theorized it, the pilot found it in the data — independently, before either knew of the other. theory and pilot converging on the same failure mode from opposite directions is a strong signal it's real and not a one-off.
 
-## proposed next steps (not yet actioned — for review before merge)
+## proposed next steps
 
-1. add a **provenance depth** field alongside `confidence` on `memory_nodes` / retrieval logs — not "how confident," but "how many condensation/retrieval hops removed from the original source." lets "weakened provenance" be measured instead of just felt.
-2. write an explicit repair path for tag merges (a `merge_log` with a revert/reweight operation), so a canonical judgment made in error doesn't propagate silently — this operationalizes "survivable wrongness" as a real property instead of an aspiration.
-3. before `research/ux.md`'s visual vocabulary is finalized, add a line item there for "what relationship types are *not* representable in this diagram grammar" — make the diagram's blind spots a documented artifact, not a discovered-later surprise.
-4. consider a periodic "coherence audit": deliberately sample low-weight / low-confidence / rarely-recalled nodes and check whether the graph's clean structure is smoothing over real ambiguity in the source data. this is the practical form of "a graph becomes more coherent than the world it represents."
+1. **drafted** → [proposals/provenance-depth.md](./proposals/provenance-depth.md) — `provenance_depth` + `provenance_source_id` on memory_nodes, `aggregate_provenance_depth` on retrieval logs, and the versioned-rewrite rule (memory rewrites are new nodes, never overwrites). weakened provenance becomes measurable instead of felt.
+2. **drafted** → [proposals/tag-merge-repair.md](./proposals/tag-merge-repair.md) — `tag_merge_log` with pre/post-merge ref snapshots, `revert_merge` + `reweight_merge` ops, and a signal-driven review queue (retrieval confidence drop, persona-relevance conflict, association orphaning). survivable wrongness for canonicalization, made concrete.
+3. **drafted** → [../ux.md](../ux.md) §4 "what this grammar cannot show" — six non-representable relationship types (time/versioning, provenance, edge uncertainty, strength trends, absence, exclusions) with candidate mitigations, plus the standing rule that a new blind spot gets a row and a decision, never a silent flattening.
+4. **still open** — periodic "coherence audit": deliberately sample low-weight / low-confidence / rarely-recalled nodes and check whether the graph's clean structure is smoothing over real ambiguity in the source data. needs a sample-selection spec and a human-review protocol; the substrate pilot's validity objective (objective 7) would have been the natural first contact-check here — but substrate is shelved (custody with the co-parent), so this stays a memorium-native design task.
 
 ## cross-references
 

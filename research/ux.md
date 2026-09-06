@@ -47,3 +47,18 @@ looking at a massive, intertwingled graph of your life and projects all at once 
 - **associative path isolation:** click any two disparate nodes across different domains (e.g., a music theory note and a system architecture snippet) and the graph instantly dims the entire canvas, highlighting only the multi-hop bridge connecting them — rendering the intermediate edge styles and weights for immediate human inspection, filtering out everything else to show why your mind made that cross-domain leap.
 
 this shifts memorium from a technical context tool into an externalized spatial mind-space.
+
+## 4. what this grammar cannot show
+
+a diagram is not a neutral window — it renders thought only in the shapes its visual grammar supports, and anything without a slot doesn't render poorly, it renders *invisibly*. (full reasoning: [brainstorm/retrieval-as-construction.md](./brainstorm/retrieval-as-construction.md) — "diagram = constraint of what thought becomes visible.") this section is the standing inventory of that blind spot, written *before* the canvas vocabulary is locked, so the gaps are a documented artifact instead of a discovered-later surprise. each row should gain a mitigation (a visual notation, a hover treatment, or an explicit "not representable — see text" affordance) before `/memorium/canvas` ships:
+
+| non-representable | why the grammar misses it | candidate mitigation |
+| --- | --- | --- |
+| **time / versioning** | the graph renders current state; a node that was rewritten (reconsolidated) shows one shape, no history dimension | hover reveals version stack; or a faint "palimpsest" outline for versioned nodes (ties to provenance depth — see [brainstorm/proposals/provenance-depth.md](./brainstorm/proposals/provenance-depth.md)) |
+| **provenance depth** | nothing distinguishes an ingested fact from a twice-reconstructed summary — both render as equally real nodes | opacity already maps to decay; provenance needs its own channel (e.g. fill style: solid = source, hatched = derived) |
+| **edge uncertainty vs. edge strength** | stroke width maps strength, but "strong and certain" and "strong but inferred" look identical | dash *within* the stroke (not the pattern reserved for causality) or a secondary hairline halo |
+| **strength trends** | an association rising vs. one decaying read as the same static line at a snapshot | small directional tick or animation on hover; at minimum, trend shown on click |
+| **absence** | the graph shows what is connected, never what *isn't* — the dark matter of "related things not yet linked" is invisible, which quietly makes the graph look more complete than the mind | explicit "uncharted" markers at cluster boundaries; a dedicated lens toggle |
+| **exclusions & conditions** | `tag_exclusions`, conditional sharing rules, and persona-conditional relevance are pairwise/logical structures, not edges between nodes — no line style can draw "X but only when persona = employee" | rendered as translucent overlay panels (rules as a layer, not edges); the permissions matrix already carries some of this |
+
+the rule going forward: when a relationship type is found that this grammar can't express, it gets a row here *and* a decision (new notation vs. explicit non-visual treatment) — never a silent flattening into the nearest drawable edge type. a maze is allowed to look like a maze.
