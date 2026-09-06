@@ -24,7 +24,7 @@ memorium already has machinery that *partially* guards against exactly what thes
 - tag wrangling has a documented merge mechanic (winner/loser, aliases preserved) but no documented *unmerge / audit-the-canonical-judgment* path — see "survivable wrongness" in the aphorism doc.
 - the confidence formula demotes semantic similarity and promotes tag match strength — good — but nothing in the formula currently distinguishes "retrievable" from "true." that's exactly "access becomes confidence" in the retrieval doc.
 - `research/ux.md` is about to make design decisions for `/memorium/canvas` — the diagram-as-constraint point ("diagram = constraint of what thought becomes visible") should land *before* that visual grammar is locked in, not after.
-- this is the same shape of finding the sibling substrate/canvas work already hit empirically: canonicalizing a messy corpus into clean domains made the resulting graph *look* more structured than the underlying reality actually is. same failure mode, independently rediscovered from a notebook instead of from data. that's a decent signal it's real and not a one-off.
+- the substrate pilot (memorium's first live pilot — see [../../pilot/readme.md](../../pilot/readme.md)) already hit this failure mode empirically: canonicalizing a messy corpus into clean domains made the resulting graph *look* more structured than the underlying reality actually is. the notebook theorized it, the pilot found it in the data — independently, before either knew of the other. theory and pilot converging on the same failure mode from opposite directions is a strong signal it's real and not a one-off.
 
 ## proposed next steps (not yet actioned — for review before merge)
 
