@@ -11,6 +11,7 @@ scoping docs for dataset construction, retrieval mechanics, and tooling. no actu
 | [agenda/](./agenda/readme.md) | formal research agenda — seven investigative axes, one per pillar, each with research questions and falsifiable benchmarks | empirical study |
 | [agenda/pillars.md](./agenda/pillars.md) | the seven pillars that define the system — knowledge, weightage, nesting, associativity, priority, contextual relevance, accuracy | architecture definition |
 | [ux.md](./ux.md) | spatial-cognitive & color-coded visual architecture — the graph IS the UI: typed edge rendering, spatial clustering, in-graph filtering | pilot UI |
+| [brainstorm/](./brainstorm/readme.md) | "reality denial" — raw theorizing on a notebook brainstorm: compression vs condensation, trickle-down semantic drift, coherence vs contact, diagrams as constraint. not yet actioned — scratch layer on the `brainstorm` branch | pillar review, ux.md design constraints |
 
 ## tools available
 
