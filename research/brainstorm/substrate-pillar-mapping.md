@@ -1,5 +1,9 @@
 # substrate pilot → memorium pillars: the compute-objective mapping
 
+**status: shelved.** substrate has two parents — memorium research is one, and custody currently sits with the co-parent. this mapping stays parked as review material; nothing below gets absorbed into the agenda unless custody comes back.
+
+---
+
 draft. this maps the substrate pilot's eight compute objectives (canvas branch, `research/canvas/compute/`) onto memorium's seven pillars / research axes, so every result the pilot produces lands in the agenda instead of sitting in the substrate repo unheard. it also names what each remaining objective will actually validate before it runs — so when the numbers come in, we already know which memorium claim they confirm or break.
 
 ## why this mapping exists
