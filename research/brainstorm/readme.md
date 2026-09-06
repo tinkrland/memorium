@@ -16,6 +16,7 @@ this isn't abstract philosophy for its own sake — it's a direct stress-test of
 | --- | --- | --- |
 | [reality-denial-aphorism.md](./reality-denial-aphorism.md) | page 1 — compression vs condensation, trickle-down semantic drift, survivable wrongness, information vs memory reintegration, distillation | canonicalization (tag wrangling) quietly replaces the thing it summarized, and errors compound downstream instead of staying local |
 | [retrieval-as-construction.md](./retrieval-as-construction.md) | page 2 — retrieval as construction, coherence vs contact, diagrams as constraint, four provenance-decay symptoms | the system (and the humans using it) mistake "this looks clean and connects nicely" for "this is accurate," with nothing currently checking the difference |
+| [substrate-pillar-mapping.md](./substrate-pillar-mapping.md) | draft — maps the substrate pilot's eight compute objectives onto the seven pillars/agenda axes, including the two findings that already crossed (canonicalization-manufactured coherence, asymmetric category-boundedness) | the pilot is the agenda's running head start — but pillar 6 (sandboxing) stays uncovered, and the mapping should say so |
 
 ## why this matters now, specifically
 
